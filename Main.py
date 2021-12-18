@@ -7,13 +7,13 @@ This is a temporary script file.
 
 import pandas as pd
 import bs4 as BeautifulSoup
-
 import requests
-import itertools
-
-
-import string    
+import itertools   
 import re 
+from nltk.tokenize import TweetTokenizer
+tokenizer = TweetTokenizer(preserve_case=False, strip_handles=True,reduce_len=True) 
+from textblob_ar import TextBlob
+from textblob_ar.correction import TextCorrection
 
 
 url = "https://www.arab-books.com/"    
@@ -57,11 +57,6 @@ Books = []
 for x in range(len(BookNames)):
     Books.append([BookNames[x],Authors[x],download_links[x]])
     
-    
-
-from nltk.tokenize import TweetTokenizer
-tokenizer = TweetTokenizer(preserve_case=False, strip_handles=True,reduce_len=True) 
-
 
 #Remove duplications
 for book in Books:
@@ -83,9 +78,7 @@ for book in Books:
 
 
 
-from textblob_ar import TextBlob
-from textblob_ar.correction import TextCorrection
-import os
+
 
 
 stop_words = ["PDF","pdf"]
@@ -96,17 +89,13 @@ for book in Books:
         New_Name = []
         for n in Name:
             if n not in stop_words: 
-                #if not n.isdigit():
-                    #n = TextCorrection().correction(n, top=True)
+                if not n.isdigit():
+                    n = TextCorrection().correction(n, top=True)
                 New_Name.append(n)
             
         New_Name =' '.join(New_Name) 
         book[0] = New_Name
         print(New_Name)
-
-
-
-
 
 BookNames = []
 Authors = []
@@ -115,15 +104,7 @@ for book in Books:
     BookNames.append(book[0])
     Authors.append(book[1])
     download_links.append(book[2])
-# Author - title - publishing year - link for pdf - etc.
-df = pd.DataFrame({"Author":BookNames,"title":Authors,"linkforpdf":download_links})
-df.to_csv('H:/4/Selected 3/Bookss.csv',index = False,encoding='utf-8-sig')
 
-print(BookNames)
-
-print(df.Author)
-
-print(BookNames.index("كتاب صلاة أهل الأعذار"))
 
 qesm = []
 Countofpages = []
@@ -133,8 +114,6 @@ Molakhas = []
 ReadLinks = []
 count = 0
 for url in download_links[count:]:
-    #url = "https://www.arab-books.com/books/%d9%83%d8%aa%d8%a7%d8%a8-%d8%a7%d9%84%d8%aa%d8%b9%d8%a8%d8%af-%d9%84%d9%84%d9%87-%d8%a8%d8%aa%d9%82%d8%a8%d9%8a%d9%84-%d8%a3%d9%82%d8%af%d8%a7%d9%85-%d8%a7%d9%84%d9%88%d9%84%d8%a7%d8%a9-pdf/"    
-    #if requests.get(url):
     if not count == 3314:
         response = requests.get(url)
         soup = BeautifulSoup.BeautifulSoup(response.content, 'html.parser')  
@@ -254,12 +233,6 @@ for r in ReadLinks:
         ReadingLinks.append("")
 
 
-#q = qesm[200]        Section
-#Countofpages[100]    Nofpages  
-#darNashr[100]    publishing_house
-#BookSize[100]     Size
-#Molakhas[4532][0].text    summary[200]
-#ReadLinks = ReadLinks[:5987]            ReadingLinks
 
 
 df = pd.DataFrame({"title":BookNames,"Author":Authors,"Section":Section,"Nofpages":Nofpages,"publishing_house":publishing_house,"Size":Size,"summary":summary,"linkforpdf":ReadingLinks})
