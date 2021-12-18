@@ -96,8 +96,8 @@ for book in Books:
         New_Name = []
         for n in Name:
             if n not in stop_words: 
-                if not n.isdigit():
-                    n = TextCorrection().correction(n, top=True)
+                #if not n.isdigit():
+                    #n = TextCorrection().correction(n, top=True)
                 New_Name.append(n)
             
         New_Name =' '.join(New_Name) 
@@ -123,22 +123,147 @@ print(BookNames)
 
 print(df.Author)
 
+print(BookNames.index("كتاب صلاة أهل الأعذار"))
+
+qesm = []
+Countofpages = []
+darNashr = []
+BookSize = [] 
+Molakhas = []
+ReadLinks = []
+count = 0
+for url in download_links[count:]:
+    #url = "https://www.arab-books.com/books/%d9%83%d8%aa%d8%a7%d8%a8-%d8%a7%d9%84%d8%aa%d8%b9%d8%a8%d8%af-%d9%84%d9%84%d9%87-%d8%a8%d8%aa%d9%82%d8%a8%d9%8a%d9%84-%d8%a3%d9%82%d8%af%d8%a7%d9%85-%d8%a7%d9%84%d9%88%d9%84%d8%a7%d8%a9-pdf/"    
+    #if requests.get(url):
+    if not count == 3314:
+        response = requests.get(url)
+        soup = BeautifulSoup.BeautifulSoup(response.content, 'html.parser')  
+        
+        bookDetails = soup.find("div",class_='book-info')
+        #print(bookDetails)
+        allLi = bookDetails.findAll("li")
+        #print(allLi[5].text)
+        qesm.append(allLi[1].text)
+        Countofpages.append(allLi[3].text)
+        darNashr.append(allLi[4].text)
+        BookSize.append(allLi[5].text)
+        
+        wasf = soup.find("div",class_='entry-content entry clearfix')
+        wasf = wasf.findAll("p")
+        wasf = wasf[0:4]
+        Molakhas.append(wasf)
+        
+        ReadLink = soup.find("div",class_='read-link-bottom')
+        ReadLinks.append(ReadLink)
+    else :
+        qesm.append("")
+        Countofpages.append("")
+        darNashr.append("")
+        BookSize.append("")
+        Molakhas.append("")
+    print(count)
+    count+=1
+download_links[3315]
+
+stop_words = ["تحميل","قسم",":","الكتاب"]
+Section = []
+
+for q in qesm:
+    if q:
+        tokens = tokenizer.tokenize(q)
+        New_q = []
+        for token in tokens:
+            if token not in stop_words: 
+                New_q.append(token)
+            
+        New_q =' '.join(New_q) 
+    Section.append(New_q)
+    print(New_q)
+    
+    
+stop_words = ["الص","صفحة",":","عدد","فحات",'ّ']
+Nofpages = []
+
+for c in Countofpages:
+    if c:
+        tokens = tokenizer.tokenize(c)
+        New_c = 0
+        for token in tokens:
+            if token not in stop_words: 
+                New_c = token
+            
+        #New_c =' '.join(New_c) 
+    Nofpages.append(New_c)
+    print(New_c)
+    
+    
+stop_words = ["دار",":","النشر"]
+publishing_house = []
+
+for p in darNashr:
+    if p:
+        tokens = tokenizer.tokenize(p)
+        New_p = []
+        for token in tokens:
+            if token not in stop_words: 
+                New_p.append(token)
+            
+        New_p =' '.join(New_p) 
+    publishing_house.append(New_p)
+    print(New_p)
+    
+stop_words = ["حجم",":","الكتاب"]
+Size = []
+
+for s in BookSize:
+    if s:
+        tokens = tokenizer.tokenize(s)
+        New_s = []
+        for token in tokens:
+            if token not in stop_words: 
+                New_s.append(token)
+            
+        New_s =' '.join(New_s) 
+    Size.append(New_s)
+    print(New_s)
+    
+
+summary = []
+for m in Molakhas:
+    print(Molakhas.index(m))
+    if len(m) == 1:
+        if m:
+            summary.append(m)
+    elif len(m) == 0:
+        summary.append("")
+    else:
+        new_m = ""
+        for index in range(2):
+            new_m+=m[index].text
+        summary.append(new_m)
+    
+ReadingLinks = []
+for r in ReadLinks:  
+    tokens = tokenizer.tokenize(str(r))
+    islink = False
+    for token in tokens:
+        if re.findall(r'^https?:\/\/.*[\r\n]*', token):
+           ReadingLinks.append(token)  
+           islink = True
+    if not islink:
+        ReadingLinks.append("")
 
 
+#q = qesm[200]        Section
+#Countofpages[100]    Nofpages  
+#darNashr[100]    publishing_house
+#BookSize[100]     Size
+#Molakhas[4532][0].text    summary[200]
+#ReadLinks = ReadLinks[:5987]            ReadingLinks
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+df = pd.DataFrame({"title":BookNames,"Author":Authors,"Section":Section,"Nofpages":Nofpages,"publishing_house":publishing_house,"Size":Size,"summary":summary,"linkforpdf":ReadingLinks})
+df.to_csv('H:/4/Selected 3/Books.csv',index = False,encoding='utf-8-sig')
 
 
 
