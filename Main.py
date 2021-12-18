@@ -74,12 +74,6 @@ for book in Books:
     for token in link:
         if re.findall(r'^https?:\/\/.*[\r\n]*', token):
             book[2] = token
-            
-
-
-
-
-
 
 stop_words = ["PDF","pdf"]
 
@@ -142,7 +136,7 @@ for url in download_links[count:]:
         Molakhas.append("")
     print(count)
     count+=1
-download_links[3315]
+
 
 stop_words = ["تحميل","قسم",":","الكتاب"]
 Section = []
@@ -220,6 +214,20 @@ for m in Molakhas:
         for index in range(2):
             new_m+=m[index].text
         summary.append(new_m)
+        
+stop_words = pd.read_csv('H:/4/Selected 3/Project/Stop_words.txt')
+stop_words = stop_words.values.tolist()
+tags = ["<p>","</p>","<a>","</a>","pdf","PDF"]
+Summary = []
+for s in summary:
+    new_s = []
+    tokens = tokenizer.tokenize(str(s))
+    for token in tokens:
+        if not token in stop_words and not token in tags:
+            new_s.append(token)
+    new_s =' '.join(new_s)
+    Summary.append(new_s)
+summary = Summary
     
 ReadingLinks = []
 for r in ReadLinks:  
@@ -236,8 +244,7 @@ for r in ReadLinks:
 
 
 df = pd.DataFrame({"title":BookNames,"Author":Authors,"Section":Section,"Nofpages":Nofpages,"publishing_house":publishing_house,"Size":Size,"summary":summary,"linkforpdf":ReadingLinks})
-df.to_csv('H:/4/Selected 3/Books.csv',index = False,encoding='utf-8-sig')
-
+df.to_csv('H:/4/Selected 3/Books2.csv',index = False,encoding='utf-8-sig')
 
 
 
