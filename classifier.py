@@ -18,13 +18,13 @@ df = df.dropna(axis=0)
 #print(df.info())
 
 X = df['summary']
-print(X.head())
-print(X[0])
+#print(X.head())
+#print(X[0])
 
 
 y = df['Section']
-print(y.tail())
-print(y[0])
+#print(y.tail())
+#print(y[0])
 
 count = CountVectorizer()
 count.fit(X)
@@ -37,7 +37,7 @@ y = l.fit_transform(y)
 classes = l.classes_
 
 #print(l.classes_)
-print(y)
+#print(y)
 
 
 x_train,x_test,y_train,y_test = train_test_split(X,y,test_size=0.2)
@@ -45,7 +45,7 @@ x_train,x_test,y_train,y_test = train_test_split(X,y,test_size=0.2)
 
 clf= MultinomialNB().fit(x_train, y_train)
 
-print(clf.score(x_test, y_test))
+print("test accuracy:",clf.score(x_test, y_test))
 
 
 
