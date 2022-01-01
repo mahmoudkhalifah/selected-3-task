@@ -75,7 +75,7 @@ for book in Books:
         if re.findall(r'^https?:\/\/.*[\r\n]*', token):
             book[2] = token
 
-stop_words = ["PDF","pdf"]
+stop_words = ["PDF","pdf","كتاب","رواية","مجلة"]
 
 for book in Books:
     if book[0]:
@@ -83,8 +83,8 @@ for book in Books:
         New_Name = []
         for n in Name:
             if n not in stop_words: 
-                if not n.isdigit():
-                    n = TextCorrection().correction(n, top=True)
+               # if not n.isdigit():
+                    #n = TextCorrection().correction(n, top=True)
                 New_Name.append(n)
             
         New_Name =' '.join(New_Name) 
@@ -96,8 +96,28 @@ Authors = []
 download_links = []
 for book in Books:
     BookNames.append(book[0])
-    Authors.append(book[1])
-    download_links.append(book[2])
+    #Authors.append(book[1])
+    #download_links.append(book[2])
+
+#Remove stop words and white spaces from authors names
+stop_words = ["الكاتب","الدكتور","الناشر","الباحث","المؤلف","أستاذ","دكتور"]
+NewAuthors = []
+for auth in Authors:
+    B_Name = []
+    tokens = tokenizer.tokenize(auth)
+    for token in tokens:
+        if token not in stop_words:
+            B_Name.append(token)
+    B_Name = ' '.join(B_Name)
+    NewAuthors.append(B_Name)
+Authors = NewAuthors
+
+
+
+
+#response = requests.get(download_links[3575])
+#soup = BeautifulSoup.BeautifulSoup(response.content, 'html.parser')  
+#ReadLinks.insert(3314,"")
 
 
 qesm = []
@@ -106,9 +126,9 @@ darNashr = []
 BookSize = [] 
 Molakhas = []
 ReadLinks = []
-count = 0
+count = 3576
 for url in download_links[count:]:
-    if not count == 3314:
+    if not count == 3314 or not count == 3575:
         response = requests.get(url)
         soup = BeautifulSoup.BeautifulSoup(response.content, 'html.parser')  
         
@@ -134,11 +154,13 @@ for url in download_links[count:]:
         darNashr.append("")
         BookSize.append("")
         Molakhas.append("")
+        ReadLinks.append("")
+
     print(count)
     count+=1
 
 
-stop_words = ["تحميل","قسم",":","الكتاب"]
+stop_words = ["تحميل","قسم",":","الكتاب:","الكتاب"]
 Section = []
 
 for q in qesm:
@@ -170,12 +192,14 @@ for c in Countofpages:
     print(New_c)
     
     
-stop_words = ["دار",":","النشر"]
+stop_words = ["النشر:",":النشر",":","النشر","-"]
 publishing_house = []
 
 for p in darNashr:
     if p:
         tokens = tokenizer.tokenize(p)
+        if tokens[0] == "دار":
+            del tokens[0]
         New_p = []
         for token in tokens:
             if token not in stop_words: 
@@ -185,7 +209,7 @@ for p in darNashr:
     publishing_house.append(New_p)
     print(New_p)
     
-stop_words = ["حجم",":","الكتاب"]
+stop_words = ["حجم",":","الكتاب:","الكتاب"]
 Size = []
 
 for s in BookSize:
@@ -213,11 +237,12 @@ for m in Molakhas:
         new_m = ""
         for index in range(2):
             new_m+=m[index].text
+            new_m+=" "
         summary.append(new_m)
         
 stop_words = pd.read_csv('H:/4/Selected 3/Project/Stop_words.txt')
 stop_words = stop_words.values.tolist()
-tags = ["<p>","</p>","<a>","</a>","pdf","PDF"]
+tags = ["<p>","</p>","<a>","</a>","pdf","PDF","span","<","</span>","<br/>","class","morecontent","="]
 Summary = []
 for s in summary:
     new_s = []
@@ -244,8 +269,7 @@ for r in ReadLinks:
 
 
 df = pd.DataFrame({"title":BookNames,"Author":Authors,"Section":Section,"Nofpages":Nofpages,"publishing_house":publishing_house,"Size":Size,"summary":summary,"linkforpdf":ReadingLinks})
-df.to_csv('H:/4/Selected 3/Books2.csv',index = False,encoding='utf-8-sig')
-
+df.to_csv('H:/4/Selected 3/Project/Books.csv',index = False,encoding='utf-8-sig')
 
 
 

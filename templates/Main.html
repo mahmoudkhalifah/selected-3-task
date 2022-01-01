@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Searching page</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        
+    </head>
+    <body >
+        
+        <header class="site-header">
+        
+            <nav class="navbar navbar-dark bg-dark text-light">
+                <div class="container">
+                    <h3>نظام استرجاع بيانات الكتب</h3>
+                    <button type="button" class="btn btn-light " data-toggle="modal" data-target="#exampleModalLong">
+                      مساعدة
+                    </button>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">قائمة الأسئلة</h5>
+                        <button type="button" class="close-left" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body text-center">
+                        ما/ ما هي مؤلفات / كتب / أعمال (اسم الكاتب)؟<br/>
+                        من / من هو مؤلف / كاتب / ناشر (اسم الكتاب)؟<br/>
+                        ما / ما هي منشورات / إصدارات (دار النشر)؟<br/>
+                               كم عدد مؤلفات / كتب / أعمال (اسم الكاتب)؟<br/>
+                               كم عدد منشورات (اسم دار النشر)؟<br/>
+                               كم عدد صفحات (اسم الكتاب)؟<br/>
+                                ما / ما هو قسم (اسم الكتاب) ؟<br/>
+
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
+            </nav>
+        </header>
+        
+        <br>
+        <main role="main" class="container">
+
+            <form action="{{url_for('Search')}}" method= "post">
+                
+               <div class="row row-justify-center">
+                <div class="col-11">
+                    <input class="form-control" type="text" placeholder="أبحث" aria-label="Search" name="search_query">
+                </div>
+                <div class="col-1">
+                  <button class="btn btn-outline-secondary" type="submit" >
+                      <i class="fa fa-search"> </i>
+                  </button>   
+                </div>
+              </div>           
+            </form>
+        
+        {%if Dict%}
+            {%if Dict["type"] != "Error"%}
+                {%if Dict["data"]%}
+                    <table class="table align-right" >
+                      <thead>
+                          <tr>
+                              
+                              {%for value in Dict["type"]%}
+                                   
+                                     <th class="text-right" scope="col">{{value}}</th>
+                                   
+                              {%endfor%}
+                           </tr>
+                      </thead>
+                      <tbody>
+                      
+                       {%for key,value in Dict["data"].items()%}
+                            <tr>
+                              {%if Dict["type"] == ["اسم الكتاب"] %}  
+                              <td class="text-right"><a href = {{value}}>{{key}}</a></td>
+                              {%else%}
+                              <td class="text-right"> {{key}}</td>
+                              <td class="text-right">{{value}}</td>
+                              {%endif%}
+                            </tr>
+                       {%endfor%}
+                       
+                      </tbody>
+                    </table>
+                {%else%}
+                    <h1 class= "text-center">لا توجد نتائج</h1>
+                {%endif%}
+            {%else%}
+                <h1 class= "text-center">تعذر البحث</h1>  
+            {%endif%}      
+        {%endif%}
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </main>
+    </body>
+</html>
