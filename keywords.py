@@ -3,6 +3,9 @@
 Created on Wed Dec 29 22:31:23 2021
 
 @author: Mahmoud
+
+import nltk
+nltk.download('stopwords')
 """
 import pandas as pd
 import nltk
@@ -26,17 +29,18 @@ X_tfidf = cv_tfidf.fit_transform(X).toarray()
 tfidf = pd.DataFrame(X_tfidf,columns=cv_tfidf.get_feature_names())
 #print(dt_tfidf.columns.values.tolist())
 
-from textblob import TextBlob
+#from textblob import TextBlob
 
 keywords = []
 
 for col in tfidf.columns:
     #print(tfidf[col].max())
-    word = TextBlob(col)
-    if tfidf[col].max() > 0.7:
+ #   word = TextBlob(col)
+    if tfidf[col].max() > 0.5:
         if not col.isdigit():
             keywords.append(col)
 
 print(keywords)
 print(len(keywords))
+print(len(tfidf.columns))
 
